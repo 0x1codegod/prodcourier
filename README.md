@@ -1,4 +1,6 @@
-# Reown AppKit Example using ethers (next.js with App Router)
+# Courier Relayer DApp
+
+![alt text](./public/courier.PNG)
 
 This is a Next.js project.
 
