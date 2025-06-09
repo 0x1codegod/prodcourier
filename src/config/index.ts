@@ -1,5 +1,5 @@
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
-import {lisk, liskSepolia  } from '@reown/appkit/networks'
+import {lisk, liskSepolia, sepolia  } from '@reown/appkit/networks'
 import type { AppKitNetwork } from '@reown/appkit/networks'
 import { cookieStorage, createStorage, http } from '@wagmi/core'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
@@ -12,7 +12,7 @@ if (!projectId) {
   throw new Error('Project ID is not defined')
 }
 
-export const networks = [lisk, liskSepolia ] as [AppKitNetwork, ...AppKitNetwork[]]
+export const networks = [lisk, liskSepolia, sepolia ] as [AppKitNetwork, ...AppKitNetwork[]]
 
 //Set up the Wagmi Adapter (Config)
 export const wagmiAdapter = new WagmiAdapter({

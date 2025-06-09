@@ -157,6 +157,34 @@ section {
   border-radius: 10px;
 }
 
+.info{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: small;
+  padding: 5px;
+}
+
+.info1{
+  text-align: left;
+}
+
+.info2{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+}
+.notifications{
+  width: 100%;
+  justify-content: right;
+  align-items: center;
+  color: white;
+  font-size: x-small;
+  font-weight: bold;
+}
 button {
   padding: 10px 15px;
   background-color: white;
@@ -212,4 +240,49 @@ pre {
   text-align: 'center';
    margin-bottom: 10px;
    line-height: 25px;
+}
+
+
+/* Mobile phones (portrait and landscape) */
+@media (max-width: 600px) {
+  /* Mobile styles */
+
+  .form{
+    width: 100%;
+  }
+  .intro{
+    width: 100%;
+    height: max-content;
+  }
+
+  .intro h1, .intro p{
+  width: 100%;
+  text-align: left;
+  margin: .8%;
+  }
+.intro h1{
+  font-size:larger;
+}
+}
+
+/* Tablets (portrait and landscape) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  /* Tablet styles */
+  
+  .form{
+    width: 90%;
+  }
+  .intro{
+    width: 90%;
+    height: max-content;
+  }
+
+  .intro h1, .intro p{
+  width: 90%;
+  text-align: left;
+  margin: 1%;
+  }
+  .intro h1{
+    font-size:larger;
+  }
 }
