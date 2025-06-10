@@ -181,7 +181,7 @@ export const Handler = () => {
      //Trigger signPermit
        const token = tokenContractAddresses[selected!].contractAddress as `0x${string}`;
        const chainId = await walletClient?.getChainId();
-       const relayer = "0xEECdFe9917dCC082E142A7e0fFdd7730B57A35eE";
+       const relayer = "0xbbA56A5173E8cA4CBF0bfc6f5e9DeDb00bb6F4F2";
         
         try {
           
@@ -199,17 +199,17 @@ export const Handler = () => {
           owner: address,
           recipient: receiver,
           amount: total.toString(), 
-          fee: _fee.toString(),
           deadline: deadline.toString(),
           v:sig.v,
           r:sig.r,
           s:sig.s,
       })
 
-      
+      console.log(body);
       setNotification({ type: "pending", message: "Transaction pending..." });
       
-      const result = await fetch("/api/relayMetaTx", {
+      const endpoint = "/api/relayMetaTx";
+      const result = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -217,12 +217,12 @@ export const Handler = () => {
         body: body
       });
 
-      const {message}= await result.json();
-
+      const {hash} = await result.json();
+      console.log(hash);
         if (result.ok) {
-        setNotification({ type: "success", message: message });
+        setNotification({ type: "success", message: hash });
       } else {
-        setNotification({ type: "error", message: `Error: ${message || "Relay failed"}` });
+        setNotification({ type: "error", message: `Error: ${hash || "Relay failed"}` });
       }
       } catch (error: any) {
       console.error("Signing failed:", error);

@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
       owner,
       recipient, 
       amount,
-      fee,
       deadline,
       v,
       r,
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Validate all required fields
     if (
-      !token || !owner || !recipient || !amount || !fee ||
+      !token || !owner || !recipient || !amount||
       !deadline || v === undefined || !r || !s
     ) {
       return NextResponse.json(
@@ -59,7 +58,6 @@ export async function POST(req: NextRequest) {
       owner,
       recipient,
       BigInt(amount),
-      BigInt(fee),
       BigInt(deadline),
       v,
       r,
