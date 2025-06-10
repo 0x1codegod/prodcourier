@@ -1,7 +1,6 @@
-import { EthersAdapter } from '@reown/appkit-adapter-ethers'
 import {lisk, liskSepolia, sepolia  } from '@reown/appkit/networks'
 import type { AppKitNetwork } from '@reown/appkit/networks'
-import { cookieStorage, createStorage, http } from '@wagmi/core'
+import { cookieStorage, createStorage } from '@wagmi/core'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
 

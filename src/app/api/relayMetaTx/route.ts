@@ -40,20 +40,21 @@ export async function POST(req: NextRequest) {
   const provider = new ethers.JsonRpcProvider(RPC_URL, undefined, {
       staticNetwork: true
     });
+    
 
     const signer = new ethers.Wallet(PRIVATE_KEY, provider);
     // Connect to contract
-    const contract: any = new ethers.Contract(
+    const contract = new ethers.Contract(
       RELAYER_CONTRACT_ADDRESS,
       RELAYER_ABI,
-      provider
+      signer
     );
 
     // get network gas price
     // const gasPrice = (await provider.getFeeData()).gasPrice;
 
     // Cast amounts to BigInt and send tx
-    const tx = await contract.connect(signer).Relay(
+    const tx = await contract.Relay(
       token,
       owner,
       recipient,

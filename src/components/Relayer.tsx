@@ -16,7 +16,6 @@ export const Handler = () => {
   const [selected, setSelected] = useState<number | null>(null);
   const [tokenBalance, setTokenBalance] = useState<bigint | string | null>(null);
   const [tokenSymbol, setTokenSymbol] = useState <string | null>(null);
-  const [fee, setFee] = useState <bigint | null>(null);
   const [notification, setNotification] = useState<{ type: "success" | "error" | "pending" | null; message: string;} | null>(null);
 
   const { address } : any = useAppKitAccount();
@@ -125,7 +124,7 @@ export const Handler = () => {
       name: tokenName! as string,
       version: "1",
       chainId: chainId,
-      verifyingContract: tokenAddress
+      verifyingContract: token
     }
 
     const types = {
@@ -173,8 +172,6 @@ export const Handler = () => {
      const parsedAmount = ethers.parseEther(amount);
      const _fee = parsedAmount/BigInt(100);
      const total = _fee + parsedAmount;
-     setFee(_fee );
-
 
     if (step === "amount" && amount !== "") {
       setStep("receiver");
