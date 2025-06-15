@@ -5,7 +5,7 @@ const RPC_URL = "https://rpc.sepolia-api.lisk.com";
 
 // Don't expose your private key with NEXT_PUBLIC
 const PRIVATE_KEY = "09870d993ae316c0c88792e885fedf81f3713944a5055b5aeb124da2da2d7d8a";
-const RELAYER_CONTRACT_ADDRESS = process.env.RELAYER_ADDRESS!;
+const RELAYER_CONTRACT_ADDRESS = "0xbbA56A5173E8cA4CBF0bfc6f5e9DeDb00bb6F4F2";
 
 
 
