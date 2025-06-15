@@ -7,6 +7,8 @@ import { tokenContractAddresses } from "@/app/onchain/contracts";
 import { formatUnits} from "viem";
 import { useAppKitAccount } from "@reown/appkit/react";
 import {ethers} from "ethers";
+import { signPermitTypedData, submitSignedPermitData } from "courier-client-sdk";
+
 
 
 export const Handler = () => {
@@ -17,13 +19,14 @@ export const Handler = () => {
   const [tokenBalance, setTokenBalance] = useState<bigint | string | null>(null);
   const [tokenSymbol, setTokenSymbol] = useState <string | null>(null);
   const [notification, setNotification] = useState<{ type: "success" | "error" | "pending" | null; message: string;} | null>(null);
+  
 
   const { address } : any = useAppKitAccount();
   const { data: walletClient } = useWalletClient();
 
- const tokenAddress: any = useMemo(() => {
-  return selected !== null ? tokenContractAddresses[selected].contractAddress : undefined;
-  }, [selected]);
+  const tokenAddress: any = useMemo(() => {
+    return selected !== null ? tokenContractAddresses[selected].contractAddress : undefined;
+    }, [selected]);
 
   useEffect(() => {
     if (notification) {
@@ -62,28 +65,7 @@ export const Handler = () => {
       enabled: !!tokenAddress,
     },
   });
-
-  //Fetch domain separator
-  const { data: domainSeparator} = useReadContract({
-    address: tokenAddress,
-    abi: erc20ABI,
-    functionName: "DOMAIN_SEPARATOR",
-    query: {
-      enabled: !!tokenAddress,
-    },
-  });
-
   
-  //Fetch nonce
-  const { data: userNonce } = useReadContract({
-    address: tokenAddress,
-    abi: erc20ABI,
-    functionName: "nonces",
-    args: [address],
-    query: {
-      enabled: !!address && !!tokenAddress,
-    },
-  });
 
   useEffect(() => {
     if (rawBalance) {
@@ -93,7 +75,7 @@ export const Handler = () => {
       setTokenSymbol(rawSymbol.toString());
     }
 
-  }, [rawBalance, rawSymbol, userNonce]);
+  }, [rawBalance, rawSymbol ]);
 
 
   const getTimestampInSeconds = () => {
@@ -105,64 +87,20 @@ export const Handler = () => {
   const signPermit = async ({
     token,
     amount,
-    relayer,
-    nonce,
-    chainId,
-    domainSeparator,
+    owner,
   }: {
     token: `0x${string}`;
     amount: bigint;
-    relayer: `0x${string}`,
-    nonce: bigint;
-    chainId: any;
-    domainSeparator: any;
+    owner: `0x${string}`;
   }) => {
     if (!walletClient || !address) throw new Error("Wallet not connected");
-    const deadline =  BigInt(getTimestampInSeconds() + 4200);
+    const _deadline =  BigInt(getTimestampInSeconds() + 4200);
+        console.log(_deadline, "_")
+    // Convert walletClient to EIP-1193 provider
+    const {v, r, s, deadline } = await signPermitTypedData({owner, token, amount, deadline: _deadline, walletClient});
     
-    const domain ={
-      name: tokenName! as string,
-      version: "1",
-      chainId: chainId,
-      verifyingContract: token
-    }
-
-    const types = {
-      Permit: [
-        { name: 'owner', type: 'address' },
-        { name: 'spender', type: 'address' },
-        { name: 'value', type: 'uint256' },
-        { name: 'nonce', type: 'uint256' },
-        { name: 'deadline', type: 'uint256' },
-      ],
-    };
-
-
-    const values = {
-      owner: address,
-      spender: relayer,
-      value: amount,
-      nonce: nonce,
-      deadline: deadline,
-    }
-
-   // Check domain is correct
-    if (await domainSeparator != ethers.TypedDataEncoder.hashDomain(domain)) {
-        throw new Error("Invalid domain");
-    }
-    
-    const signature = await walletClient.signTypedData({
-      account: address,
-      domain : domain,
-      primaryType: "Permit",
-      types: types,
-      message: values,
-    });
-
-     // split the signature into its components
-    const sig = ethers.Signature.from(signature);
-    
-    return ({sig, deadline});
+    console.log(v, r, s, deadline)
+    return {v, r, s, _deadline};
   };
 
   // Handle form submission
@@ -171,55 +109,29 @@ export const Handler = () => {
 
      const parsedAmount = ethers.parseEther(amount);
      const _fee = parsedAmount/BigInt(100);
-     const total = _fee + parsedAmount;
 
     if (step === "amount" && amount !== "") {
       setStep("receiver");
-    } else if (step === "receiver" && receiver !== "" && userNonce !== null ) {
+    } else if (step === "receiver" && receiver !== "" ) {
      
     
      //Trigger signPermit
        const token = tokenContractAddresses[selected!].contractAddress as `0x${string}`;
-       const chainId = await walletClient?.getChainId();
-       const relayer = "0xbbA56A5173E8cA4CBF0bfc6f5e9DeDb00bb6F4F2";
+       const owner = address;
+       const recipient = receiver;
         
         try {
           
-          const {sig, deadline} = await signPermit({
+          const {v,r,s, _deadline} = await signPermit({
             token: token,
-            amount: total,
-            relayer: relayer as `0x${string}`,
-            nonce: userNonce as bigint,
-            chainId,
-            domainSeparator
+            amount: parsedAmount,
+            owner: address
           });
-
-      const body = JSON.stringify({
-          token: token!,
-          owner: address,
-          recipient: receiver,
-          amount: total.toString(), 
-          deadline: deadline.toString(),
-          v:sig.v,
-          r:sig.r,
-          s:sig.s,
-      })
-
-      console.log(body);
-      setNotification({ type: "pending", message: "Transaction pending..." });
-      
-      const endpoint = "/api/relayMetaTx";
-      const result = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: body
-      });
-
-      const {hash} = await result.json();
+          
+      const tx = await submitSignedPermitData({token, owner, recipient, amount: parsedAmount.toString(), deadline: _deadline.toString(), v, r, s,})
+      const {hash} = await tx.json();
       console.log(hash);
-        if (result.ok) {
+        if (tx.ok) {
         setNotification({ type: "success", message: hash });
       } else {
         setNotification({ type: "error", message: `Error: ${hash || "Relay failed"}` });

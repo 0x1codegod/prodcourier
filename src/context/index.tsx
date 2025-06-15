@@ -11,7 +11,7 @@ import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 const metadata = {
   name: 'courier',
   description: 'A modern relayer dApp',
-  url: 'https://github.com/0xonerb/next-reown-appkit-ssr',
+  url: 'https://localhost:3000/',
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
 }
 
