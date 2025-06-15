@@ -12,14 +12,13 @@ import { signPermitTypedData, submitSignedPermitData } from "courier-client-sdk"
 
 
 export const Handler = () => {
-  const [step, setStep] = useState<"amount" | "receiver">("amount");
-  const [amount, setAmount] = useState("");
-  const [receiver, setReceiver] = useState("");
+  const [amount, setAmount] = useState<string>("");
+  const [notification, setNotification] = useState<{ type: "success" | "error" | "pending" | null; message: string;} | null>(null);
+  const [receiver, setReceiver] = useState<`0x${string}` | string>("");
   const [selected, setSelected] = useState<number | null>(null);
+  const [step, setStep] = useState<"amount" | "receiver">("amount");
   const [tokenBalance, setTokenBalance] = useState<bigint | string | null>(null);
   const [tokenSymbol, setTokenSymbol] = useState <string | null>(null);
-  const [notification, setNotification] = useState<{ type: "success" | "error" | "pending" | null; message: string;} | null>(null);
-  
 
   const { address } : any = useAppKitAccount();
   const { data: walletClient } = useWalletClient();
@@ -118,7 +117,7 @@ export const Handler = () => {
      //Trigger signPermit
        const token = tokenContractAddresses[selected!].contractAddress as `0x${string}`;
        const owner = address;
-       const recipient = receiver;
+       const recipient = receiver as `0x${string}`;
         
         try {
           
