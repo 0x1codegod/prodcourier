@@ -113,20 +113,19 @@ export const Handler = () => {
       setStep("receiver");
     } else if (step === "receiver" && receiver !== "" ) {
      
-    
      //Trigger signPermit
+        try {
        const token = tokenContractAddresses[selected!].contractAddress as `0x${string}`;
        const owner = address;
        const recipient = receiver as `0x${string}`;
-        
-        try {
+      
+        const {v,r,s, _deadline} = await signPermit({
+          token: token,
+          amount: parsedAmount,
+          owner: address
+        });
           
-          const {v,r,s, _deadline} = await signPermit({
-            token: token,
-            amount: parsedAmount,
-            owner: address
-          });
-          
+        setNotification({type: "pending", message: "pending..."})
       const tx = await submitSignedPermitData({token, owner, recipient, amount: parsedAmount.toString(), deadline: _deadline.toString(), v, r, s,})
       const {hash} = await tx.json();
       console.log(hash);
