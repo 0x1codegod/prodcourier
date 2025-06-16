@@ -9,8 +9,6 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import {ethers} from "ethers";
 import { signPermitTypedData, submitSignedPermitData } from "courier-client-sdk";
 
-
-
 export const Handler = () => {
   const [amount, setAmount] = useState<string>("");
   const [notification, setNotification] = useState<{ type: "success" | "error" | "pending" | null; message: string;} | null>(null);
@@ -34,7 +32,7 @@ export const Handler = () => {
     }
   }, [notification]);
 
-  //Fetch balance
+  //Fetch user token balance
   const { data: rawBalance } = useReadContract({
     address: tokenAddress,
     abi: erc20ABI,
@@ -45,7 +43,7 @@ export const Handler = () => {
     },
   });
 
-  //Fetch symbol
+  //Fetch token symbol
   const { data: rawSymbol } = useReadContract({
     address: tokenAddress,
     abi: erc20ABI,
@@ -55,7 +53,7 @@ export const Handler = () => {
     },
   });
 
-  //Fetch name
+  //Fetch token name
   const { data: tokenName} = useReadContract({
     address: tokenAddress,
     abi: erc20ABI,
@@ -64,7 +62,16 @@ export const Handler = () => {
       enabled: !!tokenAddress,
     },
   });
-  
+
+//Fetch relay txfee
+  const { data: fee } = useReadContract({
+    address: tokenAddress,
+    abi: erc20ABI,
+    functionName: "fee",
+    query: {
+      enabled: !!tokenAddress,
+    },
+  });
 
   useEffect(() => {
     if (rawBalance) {
@@ -128,7 +135,7 @@ export const Handler = () => {
         setNotification({type: "pending", message: "pending..."})
       const tx = await submitSignedPermitData({token, owner, recipient, amount: parsedAmount.toString(), deadline: _deadline.toString(), v, r, s,})
       const {hash} = await tx.json();
-      console.log(hash);
+      
         if (tx.ok) {
         setNotification({ type: "success", message: hash });
       } else {
@@ -139,13 +146,12 @@ export const Handler = () => {
       setNotification({ type: "error", message: `Signing failed: ${error.message}` });
       }
 
-
       // Reset
       setAmount("");
       setReceiver("");
       setStep("amount");
     }else{
-      console.log("something went wrong")
+      console.warn("something went wrong")
     }
   };
 

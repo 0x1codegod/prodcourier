@@ -253,6 +253,7 @@ pre {
   .intro{
     width: 100%;
     height: max-content;
+    text-shadow: 2px 2px 2px whitesmoke;
   }
 
   .intro h1, .intro p{
