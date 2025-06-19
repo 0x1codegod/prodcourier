@@ -248,21 +248,30 @@ pre {
   /* Mobile styles */
 
   .form{
-    width: 100%;
+    width: 95%;
   }
+
   .intro{
     width: 100%;
-    height: max-content;
-    text-shadow: 2px 2px 2px whitesmoke;
+    min-height: 100vh;
+    text-shadow: 2px 1px azure;
   }
 
   .intro h1, .intro p{
   width: 100%;
   text-align: left;
-  margin: .8%;
+  margin: 1rem;
   }
 .intro h1{
   font-size:larger;
+}
+
+.inputs{
+  display: flex;
+  flex-direction: column;
+}
+.inputs input, .inputs button {
+  width: 100%;
 }
 }
 

@@ -11,7 +11,7 @@ export default function Home() {
       
       {/* <ActionButtonList /> */}
       <div className="intro">
-        <h1>Courier: Fast, Gasless Transfers. Delivered Instantly!</h1>
+        <h1>Courier: Instant Gasless Transfers!</h1>
         <p> 
           Courier is a next-gen relayer dApp that enables users to send stablecoins without paying gas fees.
         </p>
